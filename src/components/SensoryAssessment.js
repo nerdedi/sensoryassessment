@@ -1,3 +1,4 @@
+import emailjs from '@emailjs/browser';
 import jsPDF from 'jspdf';
 import { AlertCircle, BarChart3, Brain, ChevronDown, ChevronUp, Download, Info, Mic, MicOff, Save, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
@@ -15,6 +16,7 @@ const SensoryAssessment = () => {
   const [activeSection, setActiveSection] = useState(null);
   const [saveStatus, setSaveStatus] = useState('');
   const [submitStatus, setSubmitStatus] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [showResults, setShowResults] = useState(false);
   const [recordingNote, setRecordingNote] = useState(null);
   const [isRecording, setIsRecording] = useState(false);
@@ -22,6 +24,10 @@ const SensoryAssessment = () => {
   const [showLegend, setShowLegend] = useState(false);
   const recognitionRef = useRef(null);
   const sectionRefs = useRef({});
+
+  const emailServiceId = process.env.REACT_APP_EMAILJS_SERVICE_ID;
+  const emailTemplateId = process.env.REACT_APP_EMAILJS_TEMPLATE_ID;
+  const emailPublicKey = process.env.REACT_APP_EMAILJS_PUBLIC_KEY;
 
   const handleSectionToggle = (key) => {
     const next = activeSection === key ? null : key;
@@ -788,7 +794,7 @@ const SensoryAssessment = () => {
     setTimeout(() => setSaveStatus(''), 3000);
   };
 
-  const generatePDF = async () => {
+  const buildPdfDocument = () => {
     const doc = new jsPDF();
     const pageHeight = doc.internal.pageSize.getHeight();
     const pageWidth = doc.internal.pageSize.getWidth();
@@ -947,7 +953,75 @@ const SensoryAssessment = () => {
       yPosition += 8;
     });
 
+    return doc;
+  };
+
+  const generatePDF = async () => {
+    const doc = buildPdfDocument();
     doc.save(`sensory-assessment-${formData.name || 'unnamed'}-${formData.assessmentDate}.pdf`);
+  };
+
+  const generatePdfBase64 = () => {
+    const doc = buildPdfDocument();
+    const arrayBuffer = doc.output('arraybuffer');
+    let binary = '';
+    const bytes = new Uint8Array(arrayBuffer);
+    for (let i = 0; i < bytes.byteLength; i++) {
+      binary += String.fromCharCode(bytes[i]);
+    }
+    const base64 = window.btoa(binary);
+    return {
+      dataUrl: `data:application/pdf;base64,${base64}`,
+      filename: `sensory-assessment-${formData.name || 'unnamed'}-${formData.assessmentDate}.pdf`
+    };
+  };
+
+  const formatResponsesForEmail = () => {
+    let text = '';
+    Object.entries(sensoryCategories).forEach(([key, category]) => {
+      text += `\n${category.title}\n`;
+      category.items.forEach((item, idx) => {
+        const r = formData.responses[`${key}-${idx}`];
+        const ans = r?.response ? r.response.toUpperCase() : 'UNANSWERED';
+        text += `- ${idx + 1}. ${item.text} -> ${ans}`;
+        if (r?.notes) {
+          text += ` | Notes: ${r.notes}`;
+        }
+        text += '\n';
+      });
+    });
+    return text.trim();
+  };
+
+  const sendAssessmentEmail = async () => {
+    if (!emailServiceId || !emailTemplateId || !emailPublicKey) {
+      throw new Error('Email service is not configured. Please add your EmailJS keys to the .env file.');
+    }
+
+    const completedItems = Object.values(formData.responses).filter(r => r.response).length;
+    const totalItems = Object.values(sensoryCategories).reduce((sum, cat) => sum + cat.items.length, 0);
+    const progress = `${Math.round((completedItems / totalItems) * 100)}% (${completedItems}/${totalItems})`;
+
+    const { dataUrl, filename } = generatePdfBase64();
+
+    const templateParams = {
+      name: formData.name || 'Unnamed',
+      dob: formData.dob || 'Not provided',
+      assessment_date: formData.assessmentDate || 'Not provided',
+      completed_by: formData.completedBy || 'Not provided',
+      progress,
+      additional_info: formData.additionalInfo || 'None',
+      responses_text: formatResponsesForEmail(),
+      // EmailJS supports attachments via data URLs
+      attachments: [
+        {
+          name: filename,
+          data: dataUrl
+        }
+      ]
+    };
+
+    await emailjs.send(emailServiceId, emailTemplateId, templateParams, emailPublicKey);
   };
 
   const handleSubmit = async () => {
@@ -995,29 +1069,19 @@ const SensoryAssessment = () => {
       return;
     }
 
-    setSubmitStatus('Preparing to submit...');
+    setSubmitStatus('Submitting securely...');
+    setIsSubmitting(true);
 
-    // Create mailto link
-    const subject = `Sensory Assessment Submission - ${formData.name}`;
-    let emailBody = `Assessment submitted by: ${formData.name}%0D%0A`;
-    emailBody += `Date of Birth: ${formData.dob}%0D%0A`;
-    emailBody += `Assessment Date: ${formData.assessmentDate}%0D%0A`;
-    emailBody += `Completed By: ${formData.completedBy}%0D%0A%0D%0A`;
-
-    let completedCount = 0;
-    Object.values(formData.responses).forEach(r => {
-      if (r.response) completedCount++;
-    });
-
-    emailBody += `Completed: ${completedCount} items%0D%0A%0D%0A`;
-    emailBody += `Please see the attached assessment report.%0D%0A%0D%0A`;
-    emailBody += `This is a private and confidential assessment.`;
-
-    const mailtoLink = `mailto:nerdedi@windgap.org.au?subject=${encodeURIComponent(subject)}&body=${emailBody}`;
-
-    window.location.href = mailtoLink;
-    setSubmitStatus('Email client opened. Please attach the PDF report.');
-    setTimeout(() => setSubmitStatus(''), 5000);
+    try {
+      await sendAssessmentEmail();
+      setSubmitStatus('Submitted successfully. The assessment has been emailed automatically.');
+      setTimeout(() => setSubmitStatus(''), 6000);
+    } catch (err) {
+      console.error(err);
+      setSubmitStatus(err.message || 'Submission failed. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const getProgress = () => {
@@ -1573,10 +1637,15 @@ const SensoryAssessment = () => {
             </p>
             <button
               onClick={handleSubmit}
-              className="w-full px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg hover:from-purple-700 hover:to-indigo-700 transition-all font-semibold text-base focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
+              disabled={isSubmitting}
+              className={`w-full px-6 py-3 rounded-lg transition-all font-semibold text-base focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 ${
+                isSubmitting
+                  ? 'bg-purple-300 text-white cursor-not-allowed'
+                  : 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white hover:from-purple-700 hover:to-indigo-700'
+              }`}
               aria-label="Submit assessment to nerdedi@windgap.org.au"
             >
-              Submit Assessment
+              {isSubmitting ? 'Submitting…' : 'Submit Assessment'}
             </button>
           </div>
         </div>
