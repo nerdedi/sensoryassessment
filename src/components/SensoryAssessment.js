@@ -69,6 +69,7 @@ const SensoryAssessment = () => {
       subtitle: "Touch & Texture Processing",
       description: "Processing touch, pressure, texture, and temperature through the skin and body surface.",
       color: "bg-blue-50 border-blue-200",
+      iconPath: "/icons/tactile.svg",
       items: [
         {
           text: "Light, unexpected touch on skin",
@@ -137,6 +138,7 @@ const SensoryAssessment = () => {
       subtitle: "Body Position & Force Awareness",
       description: "Sensing body position, movement, and force through muscles, joints, and connective tissue.",
       color: "bg-green-50 border-green-200",
+      iconPath: "/icons/proprioceptive.svg",
       items: [
         {
           text: "Heavy work activities requiring significant effort",
@@ -195,6 +197,7 @@ const SensoryAssessment = () => {
       subtitle: "Movement, Balance & Spatial Orientation",
       description: "Processing movement, gravity, head position, and spatial orientation through the inner ear.",
       color: "bg-purple-50 border-purple-200",
+      iconPath: "/icons/vestibular.svg",
       items: [
         {
           text: "Linear movement in straight lines",
@@ -268,6 +271,7 @@ const SensoryAssessment = () => {
       subtitle: "Sound Processing & Auditory Discrimination",
       description: "Processing, filtering, localising, and interpreting sounds through the ears and auditory pathways.",
       color: "bg-yellow-50 border-yellow-200",
+      iconPath: "/icons/auditory.svg",
       items: [
         {
           text: "Loud or sudden unexpected sounds",
@@ -351,6 +355,7 @@ const SensoryAssessment = () => {
       subtitle: "Sight Processing & Visual Perception",
       description: "Processing visual information including light, colour, pattern, movement, and spatial relationships.",
       color: "bg-indigo-50 border-indigo-200",
+      iconPath: "/icons/visual.svg",
       items: [
         {
           text: "Bright lights or intense sunlight",
@@ -439,6 +444,7 @@ const SensoryAssessment = () => {
       subtitle: "Taste & Oral Flavour Processing",
       description: "Processing tastes and flavours through taste buds and oral sensory receptors.",
       color: "bg-pink-50 border-pink-200",
+      iconPath: "/icons/gustatory.svg",
       items: [
         {
           text: "Strong or intense flavours",
@@ -497,6 +503,7 @@ const SensoryAssessment = () => {
       subtitle: "Smell & Scent Processing",
       description: "Processing scents and odours through nasal passages and olfactory receptors.",
       color: "bg-teal-50 border-teal-200",
+      iconPath: "/icons/olfactory.svg",
       items: [
         {
           text: "Strong or intense odours",
@@ -555,6 +562,7 @@ const SensoryAssessment = () => {
       subtitle: "Internal Body Signals & States",
       description: "Sensing and interpreting internal body signals, sensations, and physiological states.",
       color: "bg-orange-50 border-orange-200",
+      iconPath: "/icons/interoceptive.svg",
       items: [
         {
           text: "Hunger signals and recognising when the body needs food",
@@ -1234,7 +1242,7 @@ const SensoryAssessment = () => {
         {/* Header */}
         <div className="bg-white rounded-2xl shadow-lg p-6 sm:p-8 mb-6">
           <div className="flex items-center justify-center mb-6">
-            <img src="/windgap-logo.png" alt="Windgap Foundation" className="h-16 sm:h-20" />
+            <img src="/windgap-logo.svg" alt="Windgap Foundation" className="h-16 sm:h-20 w-auto" />
           </div>
           <h1 className="text-2xl sm:text-3xl font-light text-slate-800 mb-2">
             Comprehensive Sensory Profile Assessment
@@ -1425,8 +1433,11 @@ const SensoryAssessment = () => {
             >
               <div className="flex justify-between items-center">
                 <div className="flex-1">
-                  <h2 className="text-lg sm:text-xl font-medium text-slate-800 mb-1">
-                    {category.icon} {category.title}
+                  <h2 className="text-lg sm:text-xl font-medium text-slate-800 mb-1 flex items-center gap-3">
+                    {category.iconPath && (
+                      <img src={category.iconPath} alt="" className="w-8 h-8 sm:w-10 sm:h-10" aria-hidden="true" />
+                    )}
+                    <span>{category.title}</span>
                   </h2>
                   <p className="text-xs sm:text-sm text-slate-600 mb-1">{category.subtitle}</p>
                   <p className="text-xs text-slate-500">{category.description}</p>

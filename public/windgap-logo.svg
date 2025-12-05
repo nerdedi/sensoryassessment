@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" width="1200" height="700">
+  <!-- Swoosh arc -->
+  <path d="M 300 350 Q 500 100, 1050 150"
+        fill="none"
+        stroke="#5DBEBC"
+        stroke-width="60"
+        stroke-linecap="round"/>
+
+  <!-- Dot on 'i' -->
+  <circle cx="298" cy="335" r="20" fill="#A73438"/>
+
+  <!-- windgap text -->
+  <text x="30" y="530"
+        font-family="Arial, sans-serif"
+        font-size="240"
+        font-weight="300"
+        fill="#A73438"
+        letter-spacing="-5">windgap</text>
+
+  <!-- Creating Opportunities text -->
+  <text x="120" y="660"
+        font-family="Arial, sans-serif"
+        font-size="80"
+        font-weight="400"
+        fill="#4A5568"
+        letter-spacing="8">Creating Opportunities</text>
+</svg>

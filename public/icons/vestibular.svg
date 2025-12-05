@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <!-- Brain shape -->
+  <path d="M 70 60 Q 50 70, 50 90 Q 50 110, 60 125 Q 70 140, 85 145 Q 100 150, 115 145 Q 130 140, 140 125 Q 150 110, 150 90 Q 150 70, 130 60 Q 110 50, 90 50 Q 75 50, 70 60" fill="#FFB6B9"/>
+
+  <!-- Brain details/folds -->
+  <path d="M 75 70 Q 80 75, 85 70 Q 90 65, 95 70" fill="none" stroke="#E89BA3" stroke-width="2" stroke-linecap="round"/>
+  <path d="M 105 68 Q 110 73, 115 68 Q 120 63, 125 68" fill="none" stroke="#E89BA3" stroke-width="2" stroke-linecap="round"/>
+  <path d="M 70 85 Q 75 90, 80 85 Q 85 80, 90 85" fill="none" stroke="#E89BA3" stroke-width="2" stroke-linecap="round"/>
+  <path d="M 110 83 Q 115 88, 120 83 Q 125 78, 130 83" fill="none" stroke="#E89BA3" stroke-width="2" stroke-linecap="round"/>
+  <path d="M 75 100 Q 82 105, 88 100 Q 94 95, 100 100" fill="none" stroke="#E89BA3" stroke-width="2" stroke-linecap="round"/>
+  <path d="M 105 98 Q 112 103, 118 98 Q 124 93, 130 98" fill="none" stroke="#E89BA3" stroke-width="2" stroke-linecap="round"/>
+  <path d="M 80 115 Q 87 120, 93 115 Q 99 110, 105 115" fill="none" stroke="#E89BA3" stroke-width="2" stroke-linecap="round"/>
+  <path d="M 110 113 Q 117 118, 123 113" fill="none" stroke="#E89BA3" stroke-width="2" stroke-linecap="round"/>
+  <path d="M 85 130 Q 95 135, 105 130 Q 115 125, 120 130" fill="none" stroke="#E89BA3" stroke-width="2" stroke-linecap="round"/>
+
+  <!-- Face - eyes closed, meditating -->
+  <path d="M 85 90 Q 88 88, 91 90" fill="none" stroke="#2C3E50" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M 109 90 Q 112 88, 115 90" fill="none" stroke="#2C3E50" stroke-width="2.5" stroke-linecap="round"/>
+
+  <!-- Peaceful smile -->
+  <path d="M 88 105 Q 100 112, 112 105" fill="none" stroke="#2C3E50" stroke-width="2.5" stroke-linecap="round"/>
+
+  <!-- Meditation symbol on bottom -->
+  <ellipse cx="85" cy="165" rx="25" ry="12" fill="#A0AEC0"/>
+  <ellipse cx="115" cy="165" rx="25" ry="12" fill="#A0AEC0"/>
+  <ellipse cx="100" cy="168" rx="15" ry="8" fill="#8B7355"/>
+
+  <!-- Arms in meditation pose -->
+  <path d="M 50 100 Q 40 105, 45 115" stroke="#2C3E50" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+  <circle cx="45" cy="115" r="4" fill="#FFB6B9"/>
+
+  <path d="M 150 100 Q 160 105, 155 115" stroke="#2C3E50" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+  <circle cx="155" cy="115" r="4" fill="#FFB6B9"/>
+</svg>
