@@ -21,6 +21,24 @@ const SensoryAssessment = () => {
   const [expandedGuidance, setExpandedGuidance] = useState(null);
   const [showLegend, setShowLegend] = useState(false);
   const recognitionRef = useRef(null);
+  const sectionRefs = useRef({});
+
+  const handleSectionToggle = (key) => {
+    const next = activeSection === key ? null : key;
+    setActiveSection(next);
+
+    if (next) {
+      // Scroll to the top of the selected section so questions are in view
+      setTimeout(() => {
+        const el = sectionRefs.current[next];
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          // Nudge slightly upward to account for padding/margins
+          window.scrollBy({ top: -12, behavior: 'smooth' });
+        }
+      }, 80);
+    }
+  };
 
   // Initialize Web Speech API
   useEffect(() => {
@@ -1424,9 +1442,13 @@ const SensoryAssessment = () => {
 
         {/* Sensory Systems */}
         {Object.entries(sensoryCategories).map(([key, category]) => (
-          <div key={key} className="bg-white rounded-2xl shadow-lg mb-6 overflow-hidden">
+          <div
+            key={key}
+            ref={(el) => { sectionRefs.current[key] = el; }}
+            className="bg-white rounded-2xl shadow-lg mb-6 overflow-hidden"
+          >
             <button
-              onClick={() => setActiveSection(activeSection === key ? null : key)}
+              onClick={() => handleSectionToggle(key)}
               className={`w-full p-4 sm:p-6 text-left ${category.color} border-l-4 transition-colors hover:bg-opacity-80 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500`}
               aria-expanded={activeSection === key}
               aria-controls={`${key}-content`}
